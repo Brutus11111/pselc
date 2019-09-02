@@ -1,5 +1,5 @@
 # pselc : Select a PDF to open from your terminal
-A bash script to display a menu showing all PDF files in a directory.
+A bash script to display a menu showing all PDF files in a directory and open a user selected PDF.
 
 With the '-s' option, the script can also display PDF files inside subdirectories of the input directory as well.
 
