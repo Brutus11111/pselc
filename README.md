@@ -1,6 +1,7 @@
 # pselc : Select a PDF to open from your terminal
 ## Installation
-Copy the script to your /usr/local/bin folder
+1. Make the script executable : chmod +x pselc
+2. Copy the script to your /usr/local/bin folder
 ## Usage
 pselc \[options] \[directory]
 
