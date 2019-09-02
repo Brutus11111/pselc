@@ -1,0 +1,120 @@
+#!/bin/bash
+
+# Set this variable to your PDF reader if you use a PDF reader other than Evince, mupdf or okular 
+READER=""
+
+# Set this variable to replace the #? prompt with a custom message
+PS3="Enter your choice: "
+
+# Usage funtion to display the usage of the script and exit
+usage ()
+{
+	echo "Usage: pselc [options] [directory]"
+	echo "Options:"
+	echo "   -s    Scan for PDFs in subdirectories as well"
+	echo "Warning: -s might be slow if you have hundreds of PDFs in your directory! Use wisely!"
+	exit
+}
+
+# --help  option
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]
+then
+	usage
+fi
+
+# -s option
+flag=0
+DIR=""
+if [ "$1" == "-s" ]
+then
+	if [ -z $2 ]
+	then
+		usage
+	else
+		flag=1
+		DIR=$2
+	fi
+else
+	DIR=$1
+fi
+
+# Find a PDF reader. Evince, okular and mupdf are the most common ones around
+# Change the READER variable at the beginning of the script if you don't use any of these
+if [ -z $READER ]
+then
+	if [ -z $(which evince) ]
+	then
+		if [ -z $(which mupdf) ]
+		then
+			if [ -z $(which okular) ]
+			then
+				READER=""
+			else
+				READER=okular	
+			fi
+		else
+			READER=mupdf
+		fi
+	else
+		READER=evince
+	fi
+fi
+
+# Exit if no READER found
+if [ -z $READER ]
+then
+	echo "No PDF reader found!"
+	echo "If you use any PDF reader other than Evince, okular \
+or mupdf then please change the READER variable in the script"
+	exit
+fi
+
+# Exit if directory is not found
+ls $DIR > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+	echo "No such directory exists!"
+	exit
+fi
+
+# Read filenames into array
+i=0
+if [ $flag -eq 1 ]
+then
+	while read line
+	do
+	   	array[i]=$line
+	    	((i++))
+	done < <(find $DIR -type f -name "*.pdf")
+else
+	while read line
+	do
+		array[i]=$line
+		((i++))
+	done < <(find $DIR -maxdepth 1 -type f -name "*.pdf")
+fi
+
+array_size=${#array[@]}
+
+# Exit if no PDFs found
+if [ $array_size -eq 0 ]
+then
+	echo "No PDFs found in input directory!"
+	exit
+fi
+
+# Use BASH's inbuilt select utility to prompt for user input
+select choice in "${array[@]}"
+do
+	for (( i=0 ; i<$array_size ; i++ ))
+	do
+		if [ "$choice" == "${array[i]}"	]
+		then
+			$READER "$choice" &
+			clear
+			exit
+		fi
+	done
+	echo "No such file exists!"
+	echo "Choose again!"
+done
