@@ -16,61 +16,48 @@ usage ()
 	exit
 }
 
-# --help  option
-if [ "$1" == "--help" ] || [ "$1" == "-h" ]
-then
-	usage
-fi
-
-# -s option
+# Process flags
 flag=0
 DIR=""
-if [ "$1" == "-s" ]
-then
-	if [ -z $2 ]
-	then
+case $1 in 
+	--help|-h) 
 		usage
-	else
-		flag=1
+		;;
+	-s) 
+		[ -z $2 ] && usage
+		flag=1 
 		DIR=$2
-	fi
-else
-	DIR=$1
-fi
+		;;
+	-*)
+		echo "Invalid option!"
+		usage
+		;;
+	*)
+		DIR=$1 
+		;;
+esac
 
 # Find a PDF reader. Evince, okular and mupdf are the most common ones around
-# Change the READER variable at the beginning of the script if you don't use any of these
-if [ -z $READER ]
-then
-	if [ -z $(which evince) ]
-	then
-		if [ -z $(which mupdf) ]
-		then
-			if [ -z $(which okular) ]
-			then
-				READER=""
-			else
-				READER=okular	
-			fi
-		else
-			READER=mupdf
-		fi
-	else
-		READER=evince
-	fi
-fi
-
+# Change the READER near the beginning of the script if you don't use any of these
+case $READER in
+	"")
+		[ -n $(which evince) ] && READER=evince
+		[ -n $(which mupdf)  ] && READER=mupdf
+		[ -n $(which okular) ] && READER=okular
+		;;
+esac
+		
 # Exit if no READER found
 if [ -z $READER ]
 then
 	echo "No PDF reader found!"
 	echo "If you use any PDF reader other than Evince, okular \
-or mupdf then please change the READER variable in the script"
+or mupdf then please change the READER variable near the beginning of the script"
 	exit
 fi
 
 # Exit if directory is not found
-ls $DIR > /dev/null 2>&1
+find $DIR &>/dev/null
 if [ $? -ne 0 ]
 then
 	echo "No such directory exists!"
@@ -85,13 +72,13 @@ then
 	do
 	   	array[i]=$line
 	    	((i++))
-	done < <(find $DIR -type f -name "*.pdf")
+	done < <(find $DIR -type f -name "*.pdf") &>/dev/null
 else
 	while read line
 	do
 		array[i]=$line
 		((i++))
-	done < <(find $DIR -maxdepth 1 -type f -name "*.pdf")
+	done < <(find $DIR -maxdepth 1 -type f -name "*.pdf") &>/dev/null
 fi
 
 array_size=${#array[@]}
@@ -110,7 +97,7 @@ do
 	do
 		if [ "$choice" == "${array[i]}"	]
 		then
-			$READER "$choice" &
+			$READER "$choice" &>/dev/null &
 			clear
 			exit
 		fi
