@@ -5,8 +5,9 @@ With the '-s' option, the script can also display PDF files inside subdirectorie
 
 **Warning**: -s might be slow if you have hundreds of PDFs in a directory
 ## Installation
-1. Make the script executable : chmod +x pselc
-2. Copy the script to your /usr/local/bin folder
+1. Clone the repo
+2. Make the script executable if it is not already: chmod +x pselc
+3. Copy the script to your /usr/local/bin folder to make it available system wide
 ## Usage
 pselc \[options] \[directory]
 

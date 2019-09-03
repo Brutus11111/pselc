@@ -57,7 +57,7 @@ or mupdf then please change the READER variable near the beginning of the script
 fi
 
 # Exit if directory is not found
-find $DIR -maxdepth 1 &>/dev/null
+find $DIR -maxdepth 0 &>/dev/null
 if [ $? -ne 0 ]
 then
 	echo "No such directory exists!"
@@ -72,13 +72,13 @@ then
 	do
 	   	array[i]=$line
 	    	((i++))
-	done < <(find $DIR -type f -name "*.pdf") &>/dev/null
+	done < <(find $DIR -type f -name "*.pdf" | sort) 2>/dev/null
 else
 	while read line
 	do
 		array[i]=$line
 		((i++))
-	done < <(find $DIR -maxdepth 1 -type f -name "*.pdf") &>/dev/null
+	done < <(find $DIR -maxdepth 1 -type f -name "*.pdf" | sort) 2>/dev/null
 fi
 
 array_size=${#array[@]}
