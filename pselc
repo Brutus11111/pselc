@@ -57,7 +57,7 @@ or mupdf then please change the READER variable near the beginning of the script
 fi
 
 # Exit if directory is not found
-find $DIR &>/dev/null
+find $DIR -maxdepth 1 &>/dev/null
 if [ $? -ne 0 ]
 then
 	echo "No such directory exists!"
