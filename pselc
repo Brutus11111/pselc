@@ -38,21 +38,33 @@ case $1 in
 esac
 
 # Find a PDF reader. Evince, okular and mupdf are the most common ones around
-# Change the READER near the beginning of the script if you don't use any of these
-case $READER in
-	"")
-		[ -n $(which evince) ] && READER=evince
-		[ -n $(which mupdf)  ] && READER=mupdf
-		[ -n $(which okular) ] && READER=okular
-		;;
-esac
-		
-# Exit if no READER found
+# Change the READER at the beginning of the script if you don't use any of these
+if [ -z $READER ]
+then
+	which evince &>/dev/null
+	if [ $? -eq 0 ]
+	then
+		READER="evince"
+	fi
+	
+	which mupdf &>/dev/null
+	if [ $? -eq 0 ]
+	then 
+		READER="mupdf"
+	fi
+	
+	which okular &>/dev/null
+	if [ $? -eq 0 ]
+	then
+		READER="okular"
+	fi
+fi
+
+# Exit if no PDF reader found
 if [ -z $READER ]
 then
 	echo "No PDF reader found!"
-	echo "If you use any PDF reader other than Evince, okular \
-or mupdf then please change the READER variable near the beginning of the script"
+	echo "Consider setting the READER variable in the script"
 	exit
 fi
 
@@ -86,11 +98,12 @@ array_size=${#array[@]}
 # Exit if no PDFs found
 if [ $array_size -eq 0 ]
 then
-	echo "No PDFs found in input directory!"
+	echo "No PDFs found in input directory"
 	exit
 fi
 
 # Use BASH's inbuilt select utility to prompt for user input
+echo ""
 select choice in "${array[@]}"
 do
 	for (( i=0 ; i<$array_size ; i++ ))
@@ -102,6 +115,6 @@ do
 			exit
 		fi
 	done
-	echo "No such file exists!"
-	echo "Choose again!"
+	echo ""
+	echo "Invalid choice"
 done
