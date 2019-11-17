@@ -13,8 +13,8 @@ usage ()
 	echo ""
 	echo "Options:"
 	echo "   -s    Scan for PDFs in subdirectories as well"
+	echo "   -h    Display this help text"
 	echo ""
-	echo "Warning: -s might be slow if you have hundreds of PDFs in your directory! Use wisely!"
 	exit
 }
 
@@ -31,7 +31,8 @@ case $1 in
 		DIR=$2
 		;;
 	-*)
-		echo "Invalid option!"
+		echo "Invalid option"
+		echo ""
 		usage
 		;;
 	*)
