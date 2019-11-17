@@ -10,8 +10,10 @@ PS3="Enter your choice: "
 usage ()
 {
 	echo "Usage: pselc [options] [directory]"
+	echo ""
 	echo "Options:"
 	echo "   -s    Scan for PDFs in subdirectories as well"
+	echo ""
 	echo "Warning: -s might be slow if you have hundreds of PDFs in your directory! Use wisely!"
 	exit
 }
